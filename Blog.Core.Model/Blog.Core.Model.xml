@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Blog.Core.Model</name>
+    </assembly>
+    <members>
+        <member name="T:Blog.Core.Model.Love">
+            <summary>
+            这就是爱
+            </summary>
+        </member>
+        <member name="P:Blog.Core.Model.Love.ID">
+            <summary>
+            主键ID
+            </summary>
+        </member>
+        <member name="P:Blog.Core.Model.Love.Name">
+            <summary>
+            姓名
+            </summary>
+        </member>
+        <member name="P:Blog.Core.Model.Love.Age">
+            <summary>
+            年龄
+            </summary>
+        </member>
+        <member name="T:Blog.Core.Model.TokenModelJWT">
+            <summary>
+            jwt模型
+            </summary>
+        </member>
+        <member name="P:Blog.Core.Model.TokenModelJWT.Uid">
+            <summary>
+            Id
+            </summary>
+        </member>
+        <member name="P:Blog.Core.Model.TokenModelJWT.Role">
+            <summary>
+            角色
+            </summary>
+        </member>
+        <member name="P:Blog.Core.Model.TokenModelJWT.Work">
+            <summary>
+            职能
+            </summary>
+        </member>
+    </members>
+</doc>

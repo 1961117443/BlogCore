@@ -50,7 +50,10 @@ namespace Blog.Core.Controllers
         public void Put(int id, [FromBody] string value)
         {
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
         // DELETE api/values/5
         [HttpDelete("{id}")]
         public void Delete(int id)

@@ -38,6 +38,10 @@ namespace Blog.Core.AuthHelper.OverWrite
                 return _next(httpContext);
             }
             var tokenHeader = httpContext.Request.Headers["Authorization"].ToString();
+            if (tokenHeader.StartsWith("Bearer "))
+            {
+                tokenHeader = tokenHeader.Replace("Bearer ", "");
+            }
 
             TokenModelJWT tm = JwtHelper.SerializeJWT(tokenHeader);//序列化token，获取授权
 

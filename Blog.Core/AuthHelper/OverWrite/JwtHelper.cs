@@ -14,15 +14,33 @@ namespace Blog.Core.AuthHelper.OverWrite
     {
         public static string secretKey { get; set; } = "TThvj8G5jb6GcTFZmxVwh5Cj";
 
+        /// <summary>
+        /// 颁发jwt字符串
+        /// </summary>
+        /// <param name="tokenModel"></param>
+        /// <returns></returns>
         public static string IssueJWT(TokenModelJWT tokenModel)
         {
             var datetime = DateTime.UtcNow;
+            //var claims = new Claim[]
+            //{
+            //    new Claim(JwtRegisteredClaimNames.Jti,tokenModel.Uid.ToString()),
+            //    new Claim("Role",tokenModel.Role),
+            //    new Claim(JwtRegisteredClaimNames.Iat,datetime.ToString(),ClaimValueTypes.Integer64)
+            //};
             var claims = new Claim[]
-            {
-                new Claim(JwtRegisteredClaimNames.Jti,tokenModel.Uid.ToString()),
-                new Claim("Role",tokenModel.Role),
-                new Claim(JwtRegisteredClaimNames.Iat,datetime.ToString(),ClaimValueTypes.Integer64)
-            };
+                {
+                    //下边为Claim的默认配置
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Iat, $"{new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}"),
+                new Claim(JwtRegisteredClaimNames.Nbf,$"{new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}") ,
+                //这个就是过期时间，目前是过期100秒，可自定义，注意JWT有自己的缓冲过期时间
+                new Claim (JwtRegisteredClaimNames.Exp,$"{new DateTimeOffset(DateTime.Now.AddSeconds(100)).ToUnixTimeSeconds()}"),
+                new Claim(JwtRegisteredClaimNames.Iss,"Blog.Core"),
+                new Claim(JwtRegisteredClaimNames.Aud,"wr"),
+                //这个Role是官方UseAuthentication要要验证的Role，我们就不用手动设置Role这个属性了
+                new Claim(ClaimTypes.Role,tokenModel.Role),
+               };
 
             //秘钥
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtHelper.secretKey));
@@ -31,7 +49,7 @@ namespace Blog.Core.AuthHelper.OverWrite
             var jwt = new JwtSecurityToken(
                 issuer: "Blog.Core",
                 claims: claims, //声明集合
-                expires: datetime.AddHours(2),
+              //  expires: datetime.AddHours(2),
                 signingCredentials: creds);
 
             var jwtHandler = new JwtSecurityTokenHandler();
@@ -43,8 +61,8 @@ namespace Blog.Core.AuthHelper.OverWrite
         /// <summary>
         /// 解析
         /// </summary>
-        /// <param name="jwtStr"></param>
-        /// <returns></returns>
+        /// <param name="jwtStr">jwt字符串</param>
+        /// <returns>jwt载体</returns>
         public static TokenModelJWT SerializeJWT(string jwtStr)
         {
             var jwtHandler = new JwtSecurityTokenHandler();

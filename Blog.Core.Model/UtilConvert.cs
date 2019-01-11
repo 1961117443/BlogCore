@@ -8,8 +8,7 @@ namespace Blog.Core
     {
         public static long ObjToInt(this object data)
         {
-            long l = 0;
-            long.TryParse(data.ToString(), out l);
+            long.TryParse(data.ToString(), out long l);
             return l;
         }
 

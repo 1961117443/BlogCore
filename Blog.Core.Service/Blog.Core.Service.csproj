@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Blog.Core.IRepository\Blog.Core.IRepository.csproj" />
+    <ProjectReference Include="..\Blog.Core.IService\Blog.Core.IService.csproj" />
+    <ProjectReference Include="..\Blog.Core.Model\Blog.Core.Model.csproj" />
+    <ProjectReference Include="..\Blog.Core.Repository.SqlSugar\Blog.Core.Repository.SqlSugar.csproj" />
+  </ItemGroup>
+
+</Project>

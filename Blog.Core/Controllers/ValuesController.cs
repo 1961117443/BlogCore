@@ -12,9 +12,9 @@ namespace Blog.Core.Controllers
     /// 这是控制器的说明
     /// </summary>
     [Route("api/[controller]")]
-    [Authorize(Policy ="Admin")]
-    [ApiController]
-    public class ValuesController : ControllerBase
+    [Authorize]
+   // [ApiController]
+    public abstract class ValuesController : ControllerBase
     {
         // GET api/values
         [HttpGet]

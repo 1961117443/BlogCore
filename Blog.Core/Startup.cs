@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Blog.Core.AuthHelper.OverWrite;
+using Blog.Core.SqlSugarRepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,6 +32,8 @@ namespace Blog.Core
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            BaseDBConfig.ConnectionString = Configuration.GetSection("AppSettings:SqlServerConnection").Value;
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             #region Swagger
@@ -86,7 +89,7 @@ namespace Blog.Core
             {
                 options.AddPolicy("Client", p => p.RequireRole("Client").Build());
                 options.AddPolicy("Admin", p => p.RequireRole("Admin").Build());
-                options.AddPolicy("AdminOrClient", p => p.RequireRole("Admin", "Client").Build());
+                options.AddPolicy("SystemOrAdmin", p => p.RequireRole("Admin", "Client").Build());
             });
             #endregion
             #endregion

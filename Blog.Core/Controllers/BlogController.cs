@@ -9,13 +9,19 @@ namespace Blog.Core.Controllers
 {
 
     using Blog.Core.Model.Models;
-    using Blog.Core.IService;
-    using Blog.Core.Service;
+    using Blog.Core.IService; 
 
     [Route("api/[controller]")]
     [ApiController]
     public class BlogController : ControllerBase
     {
+        protected readonly IAdvertisementServices advertisementServices;
+
+        public BlogController(IAdvertisementServices services)
+        {
+            advertisementServices = services;
+        }
+
         // GET: api/Blog
         [HttpGet]
         public IEnumerable<string> Get()
@@ -26,9 +32,8 @@ namespace Blog.Core.Controllers
         // GET: api/Blog/5 
         [HttpGet("{id}", Name = "Get")]
         public async Task<List<Advertisement>> Get(int id)
-        {
-             IAdvertisementServices advertisementServices = new AdvertisementServices();
-            var list = await advertisementServices.Query(w => w.Id == id);
+        { 
+            var list = await advertisementServices?.Query(w => w.Id == id);
             return  list;
         }
 

@@ -6,7 +6,12 @@
     <AssemblyName>Blog.Core.SqlSugarRepository</AssemblyName>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\Blog.Core\bin\Debug\</OutputPath>
+  </PropertyGroup>
+
   <ItemGroup>
+    <ProjectReference Include="..\Blog.Core.Common\Blog.Core.Common.csproj" />
     <ProjectReference Include="..\Blog.Core.IRepository\Blog.Core.IRepository.csproj" />
     <ProjectReference Include="..\Blog.Core.Model\Blog.Core.Model.csproj" />
   </ItemGroup>

@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Blog.Core.AuthHelper.OverWrite;
-using Blog.Core.SqlSugarRepository;
+using Blog.Core.IService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,9 +33,10 @@ namespace Blog.Core
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            BaseDBConfig.ConnectionString = Configuration.GetSection("AppSettings:SqlServerConnection").Value;
+            
+           // BaseDBConfig.ConnectionString = Configuration.GetSection("AppSettings:SqlServerConnection").Value;
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
@@ -113,6 +117,27 @@ namespace Blog.Core
                     ClockSkew = TimeSpan.FromSeconds(30)
                 };
             });
+
+            //services.AddTransient<IAdvertisementServices, AdvertisementServices>();
+            //services.AddTransient<IAdvertisementRepository, AdvertisementRepository>();
+
+            #region autofac
+            var builder = new ContainerBuilder();
+            var bpath = Microsoft.DotNet.PlatformAbstractions.ApplicationEnvironment.ApplicationBasePath;
+
+            var dllFile = Path.Combine(bpath, "Blog.Core.Service.dll");
+            var assembly = Assembly.LoadFile(dllFile);
+            builder.RegisterAssemblyTypes(assembly).AsImplementedInterfaces();          
+
+            dllFile = Path.Combine(bpath, "Blog.Core.SqlSugarRepository.dll");
+            assembly = Assembly.LoadFile(dllFile);
+            builder.RegisterAssemblyTypes(assembly).AsImplementedInterfaces(); 
+
+
+            builder.Populate(services);
+            var appContainer= builder.Build();
+            #endregion
+            return new AutofacServiceProvider(appContainer);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

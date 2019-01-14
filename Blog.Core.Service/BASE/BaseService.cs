@@ -1,6 +1,5 @@
 ﻿using Blog.Core.IRepository.BASE;
-using Blog.Core.IService.BASE;
-using Blog.Core.SqlSugarRepository.BASE;
+using Blog.Core.IService.BASE; 
 using SqlSugar;
 using System;
 using System.Collections.Generic;
@@ -12,7 +11,7 @@ namespace Blog.Core.Service.BASE
 {
     public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class, new()
     {
-        public IBaseRepository<TEntity> baseDal = new BaseRepository<TEntity>();
+        protected IBaseRepository<TEntity> baseDal ;
 
         public async Task<int> Add(TEntity model)
         {

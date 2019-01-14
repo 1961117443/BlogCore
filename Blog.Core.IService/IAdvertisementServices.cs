@@ -9,10 +9,6 @@ namespace Blog.Core.IService
 {
     public interface IAdvertisementServices : IBaseService<Advertisement>
     {
-        //int Add(Advertisement model);
-        //bool Delete(Advertisement model);
-        //List<Advertisement> Query(Expression<Func<Advertisement, bool>> whereExpression);
-        //int Sum(int i, int j);
-        //bool Update(Advertisement model);
+         
     }
 }

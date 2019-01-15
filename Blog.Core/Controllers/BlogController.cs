@@ -9,17 +9,48 @@ namespace Blog.Core.Controllers
 {
 
     using Blog.Core.Model.Models;
-    using Blog.Core.IService; 
+    using Blog.Core.IService;
+    using Blog.Core.Common.Redis;
 
     [Route("api/[controller]")]
     [ApiController]
     public class BlogController : ControllerBase
     {
         protected readonly IAdvertisementServices advertisementServices;
-
-        public BlogController(IAdvertisementServices services)
+        protected readonly IBlogArticleServices blogArticleServices;
+        protected readonly IRedisCacheManager redisCacheManager;
+        public BlogController(IAdvertisementServices services,
+            IBlogArticleServices blogArticleServices,
+            IRedisCacheManager redisCacheManager)
         {
             advertisementServices = services;
+            this.blogArticleServices = blogArticleServices;
+            this.redisCacheManager = redisCacheManager;
+        }
+
+        /// <summary>
+        /// 获取博客列表
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetBlogs")]
+        public async Task<List<BlogArticle>> GetBlogs()
+        {
+            var key = "Redis:Blog:GetBlogs";
+
+            List<BlogArticle> list = new List<BlogArticle>();
+           
+            if (!redisCacheManager.Get(key))
+            {
+                list = await blogArticleServices.getBlogs();
+                redisCacheManager.Set(key, list, TimeSpan.FromMinutes(1));
+            }
+            else
+            {
+                list= redisCacheManager.Get<List<BlogArticle>>(key);
+            }
+
+            return list;
         }
 
         // GET: api/Blog

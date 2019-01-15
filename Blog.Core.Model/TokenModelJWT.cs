@@ -7,7 +7,7 @@ namespace Blog.Core.Model
     /// <summary>
     /// jwt模型
     /// </summary>
-    public  class TokenModelJWT
+    public  class JWTTokenModel
     {
         /// <summary>
         /// Id

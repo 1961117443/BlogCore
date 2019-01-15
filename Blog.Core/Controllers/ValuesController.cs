@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Blog.Core.Model;
+using Blog.Core.Model.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blog.Core.Controllers
@@ -12,9 +14,9 @@ namespace Blog.Core.Controllers
     /// 这是控制器的说明
     /// </summary>
     [Route("api/[controller]")]
-    [Authorize]
-   // [ApiController]
-    public abstract class ValuesController : ControllerBase
+    //[Authorize]
+    [ApiController]
+    public class ValuesController : Controller
     {
         // GET api/values
         [HttpGet]
@@ -61,13 +63,14 @@ namespace Blog.Core.Controllers
         }
 
         /// <summary>
-        /// 保存Love
+        /// post
         /// </summary>
-        /// <param name="love">model实体类参数</param>
-        [HttpPost] 
-        public void Post(Love love)
+        /// <param name="blogArticle">model实体类参数</param>
+        [HttpPost]
+        [AllowAnonymous]
+        public object Post([FromBody]  BlogArticle blogArticle)
         {
-
+            return Ok(new { success = true, data = blogArticle });
         }
     }
 }

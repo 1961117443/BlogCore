@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Blog.Core.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
@@ -28,6 +29,8 @@ namespace Blog.Core.IService.BASE
         Task<List<TEntity>> Query(string strWhere);
         Task<List<TEntity>> Query(Expression<Func<TEntity, bool>> whereExpression);
         Task<List<TEntity>> Query(Expression<Func<TEntity, bool>> whereExpression, string strOrderByFileds);
+
+        [CachingAttribute]
         Task<List<TEntity>> Query(Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, object>> orderByExpression, bool isAsc = true);
         Task<List<TEntity>> Query(string strWhere, string strOrderByFileds);
         Task<List<TEntity>> Query(Expression<Func<TEntity, bool>> whereExpression, int intTop, string strOrderByFileds);

@@ -37,5 +37,13 @@ namespace Blog.Core.Common
         {
             return Configuration[key];
         }
+        ///// <summary>
+        ///// Redis链接字符串
+        ///// </summary>
+        //public static string RedisConnectionString = app("AppSettings", "RedisConfig", "ConnectionString");
+        ///// <summary>
+        ///// SqlServer数据库连接字符串
+        ///// </summary>
+        //public static string SqlServerConnectionString = app("AppSettings", "SqlServer", "ConnectionString");
     }
 }

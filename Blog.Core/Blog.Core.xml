@@ -4,7 +4,7 @@
         <name>Blog.Core</name>
     </assembly>
     <members>
-        <member name="M:Blog.Core.AuthHelper.OverWrite.JwtHelper.IssueJWT(Blog.Core.Model.TokenModelJWT)">
+        <member name="M:Blog.Core.AuthHelper.OverWrite.JwtHelper.IssueJWT(Blog.Core.Model.JWTTokenModel)">
             <summary>
             颁发jwt字符串
             </summary>
@@ -41,6 +41,12 @@
             <param name="httpContext"></param>
             <returns></returns>
         </member>
+        <member name="M:Blog.Core.Controllers.BlogController.GetBlogs">
+            <summary>
+            获取博客列表
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:Blog.Core.Controllers.LoginController">
             <summary>
             
@@ -49,6 +55,14 @@
         <member name="M:Blog.Core.Controllers.LoginController.GetJWTStr(System.Int64,System.String)">
             <summary>
             获取JWT的重写方法，推荐这种，注意在文件夹OverWrite下
+            </summary>
+            <param name="id">id</param>
+            <param name="sub">角色</param>
+            <returns></returns>
+        </member>
+        <member name="M:Blog.Core.Controllers.LoginController.GetJWTStr2(System.Int64,System.String)">
+            <summary>
+             
             </summary>
             <param name="id">id</param>
             <param name="sub">角色</param>
@@ -79,11 +93,11 @@
             </summary>
             <param name="id"></param>
         </member>
-        <member name="M:Blog.Core.Controllers.ValuesController.Post(Blog.Core.Model.Love)">
+        <member name="M:Blog.Core.Controllers.ValuesController.Post(Blog.Core.Model.Models.BlogArticle)">
             <summary>
-            保存Love
+            post
             </summary>
-            <param name="love">model实体类参数</param>
+            <param name="blogArticle">model实体类参数</param>
         </member>
     </members>
 </doc>

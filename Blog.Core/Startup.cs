@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Blog.Core.AOP;
 using Blog.Core.AuthHelper.OverWrite;
 using Blog.Core.IService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -20,6 +21,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Swagger;
+using Autofac.Extras.DynamicProxy;
+using Blog.Core.Common.Redis;
 
 namespace Blog.Core
 {
@@ -39,6 +42,34 @@ namespace Blog.Core
            // BaseDBConfig.ConnectionString = Configuration.GetSection("AppSettings:SqlServerConnection").Value;
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            #region 配置跨域 CORS
+            services.AddCors(c =>
+            {
+                //↓↓↓↓↓↓↓注意正式环境不要使用这种全开放的处理↓↓↓↓↓↓↓↓↓↓
+                c.AddPolicy("AllRequests", policy =>
+                {
+                    policy
+                    .AllowAnyOrigin()//允许任何源
+                    .AllowAnyMethod()//允许任何方式
+                    .AllowAnyHeader()//允许任何头
+                    .AllowCredentials();//允许cookie
+                });
+                //↑↑↑↑↑↑↑注意正式环境不要使用这种全开放的处理↑↑↑↑↑↑↑↑↑↑
+
+
+                //一般采用这种方法
+                c.AddPolicy("MyLimitRequests", policy =>
+                {
+                    policy
+                     // .AllowAnyOrigin()
+                     .WithOrigins("http://localhost:8020", "http://192.168.31.148:19115", "http://blog.core.xxx.com", "")//支持多个域名端口
+                    .WithMethods("GET", "POST", "PUT", "DELETE")//请求方法添加到策略 
+                    // .WithHeaders("authorization");//标头添加到策略
+                      .AllowAnyHeader(); //必须AllowAnyHeader
+                });
+            });
+            #endregion
 
             #region Swagger
             services.AddSwaggerGen(c =>
@@ -98,41 +129,55 @@ namespace Blog.Core
             #endregion
             #endregion
 
+            #region 系统自带的认证
             services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(p =>
-            {
-                p.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuer = true,//是否验证Issuer
+                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                }).AddJwtBearer(p =>
+                {
+                    p.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,//是否验证Issuer
                     ValidateAudience = true,//是否验证Audience 
                     ValidateIssuerSigningKey = true,//是否验证IssuerSigningKey 
                     ValidIssuer = "Blog.Core",
-                    ValidAudience = "wr",
-                    ValidateLifetime = true,//是否验证超时  当设置exp和nbf时有效 同时启用ClockSkew 
+                        ValidAudience = "wr",
+                        ValidateLifetime = true,//是否验证超时  当设置exp和nbf时有效 同时启用ClockSkew 
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(JwtHelper.secretKey)),
                     //注意这是缓冲过期时间，总的有效时间等于这个时间加上jwt的过期时间，如果不配置，默认是5分钟
                     ClockSkew = TimeSpan.FromSeconds(30)
-                };
-            });
+                    };
+                });
+            #endregion
 
+            
+
+            #region autofac ioc
             //services.AddTransient<IAdvertisementServices, AdvertisementServices>();
             //services.AddTransient<IAdvertisementRepository, AdvertisementRepository>();
+            services.AddScoped<ICaching, MemoryCaching>();
+            services.AddScoped<IRedisCacheManager, RedisCacheManager>();
 
-            #region autofac
             var builder = new ContainerBuilder();
             var bpath = Microsoft.DotNet.PlatformAbstractions.ApplicationEnvironment.ApplicationBasePath;
 
+            //可以直接替换其他拦截器！一定要把拦截器进行注册
+            builder.RegisterType<BlogLogAOP>();
+            builder.RegisterType<BlogCacheAOP>();
+
             var dllFile = Path.Combine(bpath, "Blog.Core.Service.dll");
             var assembly = Assembly.LoadFile(dllFile);
-            builder.RegisterAssemblyTypes(assembly).AsImplementedInterfaces();          
+            builder.RegisterAssemblyTypes(assembly)
+                .AsImplementedInterfaces()
+                .InstancePerLifetimeScope()
+                .EnableInterfaceInterceptors()  //引用Autofac.Extras.DynamicProxy;       
+                .InterceptedBy(typeof(BlogLogAOP))
+                .InterceptedBy(typeof(BlogCacheAOP));
 
             dllFile = Path.Combine(bpath, "Blog.Core.SqlSugarRepository.dll");
             assembly = Assembly.LoadFile(dllFile);
-            builder.RegisterAssemblyTypes(assembly).AsImplementedInterfaces(); 
-
+            builder.RegisterAssemblyTypes(assembly).AsImplementedInterfaces();  
 
             builder.Populate(services);
             var appContainer= builder.Build();
@@ -157,6 +202,9 @@ namespace Blog.Core
 
             app.UseAuthentication();
 
+            #region 配置跨域 CORS
+            app.UseCors("MyLimitRequests"); 
+            #endregion
 
             app.UseMvc();
         }

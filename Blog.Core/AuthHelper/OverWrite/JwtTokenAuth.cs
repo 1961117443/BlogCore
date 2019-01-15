@@ -43,7 +43,7 @@ namespace Blog.Core.AuthHelper.OverWrite
                 tokenHeader = tokenHeader.Replace("Bearer ", "");
             }
 
-            TokenModelJWT tm = JwtHelper.SerializeJWT(tokenHeader);//序列化token，获取授权
+            JWTTokenModel tm = JwtHelper.SerializeJWT(tokenHeader);//序列化token，获取授权
 
             //授权 注意这个可以添加多个角色声明，请注意这是一个 list
             var claimList = new List<Claim>();

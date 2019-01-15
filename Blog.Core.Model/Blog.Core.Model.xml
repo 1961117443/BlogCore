@@ -660,22 +660,22 @@
             ID
             </summary>
         </member>
-        <member name="T:Blog.Core.Model.TokenModelJWT">
+        <member name="T:Blog.Core.Model.JWTTokenModel">
             <summary>
             jwt模型
             </summary>
         </member>
-        <member name="P:Blog.Core.Model.TokenModelJWT.Uid">
+        <member name="P:Blog.Core.Model.JWTTokenModel.Uid">
             <summary>
             Id
             </summary>
         </member>
-        <member name="P:Blog.Core.Model.TokenModelJWT.Role">
+        <member name="P:Blog.Core.Model.JWTTokenModel.Role">
             <summary>
             角色
             </summary>
         </member>
-        <member name="P:Blog.Core.Model.TokenModelJWT.Work">
+        <member name="P:Blog.Core.Model.JWTTokenModel.Work">
             <summary>
             职能
             </summary>

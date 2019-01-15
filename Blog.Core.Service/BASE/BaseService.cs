@@ -1,4 +1,5 @@
-﻿using Blog.Core.IRepository.BASE;
+﻿using Blog.Core.Common;
+using Blog.Core.IRepository.BASE;
 using Blog.Core.IService.BASE; 
 using SqlSugar;
 using System;
@@ -53,6 +54,7 @@ namespace Blog.Core.Service.BASE
             return await baseDal.Query(whereExpression, strOrderByFileds);
         }
 
+        [CachingAttribute]
         public async Task<List<TEntity>> Query(Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, object>> orderByExpression, bool isAsc = true)
         {
             return await baseDal.Query(whereExpression, orderByExpression, isAsc);

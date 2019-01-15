@@ -43,14 +43,14 @@ namespace Blog.Core.SqlSugarRepository.BASE
             return await Task.Run(() => entityDB.Delete(model));
         }
 
-        public Task<bool> DeleteById(object id)
+        public async Task<bool> DeleteById(object id)
         {
-            throw new NotImplementedException();
+            return await Task.Run(() => entityDB.DeleteById(id));
         }
 
-        public Task<bool> DeleteByIds(object[] ids)
+        public async Task<bool> DeleteByIds(object[] ids)
         {
-            throw new NotImplementedException();
+            return await Task.Run(() => entityDB.DeleteByIds(ids));
         }
 
         public async Task<List<TEntity>> Query()
@@ -75,9 +75,11 @@ namespace Blog.Core.SqlSugarRepository.BASE
             throw new NotImplementedException();
         }
 
-        public Task<List<TEntity>> Query(Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, object>> orderByExpression, bool isAsc = true)
+        public async Task<List<TEntity>> Query(Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, object>> orderByExpression, bool isAsc = true)
         {
-            throw new NotImplementedException();
+
+            var list = await Task.Run(() => db.Queryable<TEntity>().Where(whereExpression).OrderBy(orderByExpression, isAsc ? OrderByType.Asc : OrderByType.Desc).ToList());
+            return list;
         }
 
         public Task<List<TEntity>> Query(string strWhere, string strOrderByFileds)

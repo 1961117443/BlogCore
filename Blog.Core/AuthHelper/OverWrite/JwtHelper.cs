@@ -19,7 +19,7 @@ namespace Blog.Core.AuthHelper.OverWrite
         /// </summary>
         /// <param name="tokenModel"></param>
         /// <returns></returns>
-        public static string IssueJWT(TokenModelJWT tokenModel)
+        public static string IssueJWT(JWTTokenModel tokenModel)
         {
             var datetime = DateTime.UtcNow;
             //var claims = new Claim[]
@@ -63,7 +63,7 @@ namespace Blog.Core.AuthHelper.OverWrite
         /// </summary>
         /// <param name="jwtStr">jwt字符串</param>
         /// <returns>jwt载体</returns>
-        public static TokenModelJWT SerializeJWT(string jwtStr)
+        public static JWTTokenModel SerializeJWT(string jwtStr)
         {
             var jwtHandler = new JwtSecurityTokenHandler();
             JwtSecurityToken jwtToken = jwtHandler.ReadJwtToken(jwtStr);
@@ -77,7 +77,7 @@ namespace Blog.Core.AuthHelper.OverWrite
                 Console.WriteLine(e);
                 throw;
             }
-            var tm = new TokenModelJWT
+            var tm = new JWTTokenModel
             {
                 Uid = (jwtToken.Id).ObjToInt(),
                 Role = role != null ? role.ObjToString() : "",
